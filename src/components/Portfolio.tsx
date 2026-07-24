@@ -17,10 +17,13 @@ import {
   MapPin,
   Menu,
   Phone,
+  Search,
   Sparkles,
+  Terminal,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import PortfolioChrome from "@/components/PortfolioChrome";
 
 const navItems = [
   ["About", "about"],
@@ -81,6 +84,27 @@ function SectionLabel({ children, number }: { children: ReactNode; number: strin
 export default function Portfolio() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const [navVisible, setNavVisible] = useState(true);
+
+  useEffect(() => {
+    let previousY = window.scrollY;
+    const sections = ["home", ...navItems.map(([, id]) => id)];
+    const onScroll = () => {
+      const currentY = window.scrollY;
+      setNavVisible(currentY < previousY || currentY < 120);
+      previousY = currentY;
+      let current = "home";
+      sections.forEach((id) => {
+        const section = document.getElementById(id);
+        if (section && section.offsetTop - 180 <= currentY) current = id;
+      });
+      setActiveSection(current);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const copyEmail = async () => {
     await navigator.clipboard.writeText("18sharmagagan@gmail.com");
@@ -90,8 +114,9 @@ export default function Portfolio() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#070816] text-[#f6f3ff] selection:bg-violet-500 selection:text-white">
-      <nav className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#070816]/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
+      <PortfolioChrome />
+      <nav className={`fixed inset-x-0 top-3 z-50 mx-auto w-[calc(100%-1.25rem)] max-w-7xl rounded-2xl border border-white/10 bg-[#070816]/80 shadow-2xl backdrop-blur-2xl transition-transform duration-500 sm:w-[calc(100%-2rem)] ${navVisible ? "translate-y-0" : "-translate-y-28"}`}>
+        <div className="mx-auto flex h-16 items-center justify-between px-3 sm:px-5">
           <a href="#home" className="group flex items-center gap-3" aria-label="Gaganverse home">
             <img src="/assets/gs-monogram.png" alt="GS monogram" className="h-11 w-11 rounded-2xl object-cover ring-1 ring-white/15 transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105" />
             <div>
@@ -100,26 +125,29 @@ export default function Portfolio() {
             </div>
           </a>
 
-          <div className="hidden items-center gap-8 lg:flex">
+          <div className="hidden items-center gap-7 lg:flex">
             {navItems.map(([label, id]) => (
-              <a key={id} href={`#${id}`} className="nav-link text-sm font-medium text-slate-300 hover:text-white">
+              <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined} className={`nav-link text-xs font-bold uppercase tracking-wider ${activeSection === id ? "text-cyan-300" : "text-slate-400 hover:text-white"}`}>
                 {label}
               </a>
             ))}
           </div>
 
-          <div className="hidden sm:block">
-            <Button asChild className="h-11 rounded-full bg-violet-500 px-5 font-bold text-white shadow-[0_0_28px_rgba(109,94,247,0.28)] hover:bg-violet-400">
-              <a href="mailto:18sharmagagan@gmail.com">Let&apos;s connect <ArrowUpRight className="ml-2 h-4 w-4" /></a>
+          <div className="hidden items-center gap-2 sm:flex">
+            <button onClick={() => window.dispatchEvent(new Event("open-command-palette"))} className="flex h-10 items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-semibold text-slate-300 transition hover:border-cyan-300/30 hover:text-white" aria-label="Open command palette">
+              <Search className="h-3.5 w-3.5" /><span className="hidden xl:inline">Quick find</span><kbd className="hidden rounded border border-white/10 px-1.5 py-0.5 text-[9px] text-slate-500 lg:block">⌘K</kbd>
+            </button>
+            <Button asChild className="h-10 rounded-full bg-violet-500 px-4 text-xs font-bold text-white shadow-[0_0_28px_rgba(109,94,247,0.28)] hover:bg-violet-400">
+              <a href="mailto:18sharmagagan@gmail.com">Let&apos;s connect <ArrowUpRight className="ml-1.5 h-4 w-4" /></a>
             </Button>
           </div>
 
-          <button onClick={() => setMenuOpen(!menuOpen)} className="rounded-full border border-white/10 bg-white/5 p-3 sm:hidden" aria-label="Toggle navigation">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="rounded-full border border-white/10 bg-white/5 p-2.5 lg:hidden" aria-label="Toggle navigation" aria-expanded={menuOpen}>
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
         {menuOpen && (
-          <div className="border-t border-white/10 bg-[#0b0d20] px-5 py-5 sm:hidden">
+          <div className="border-t border-white/10 bg-[#0b0d20] px-5 py-5 lg:hidden">
             {navItems.map(([label, id]) => (
               <a key={id} href={`#${id}`} onClick={() => setMenuOpen(false)} className="flex items-center justify-between border-b border-white/10 py-4 text-base font-semibold">
                 {label}<ArrowDownRight className="h-4 w-4 text-cyan-300" />
@@ -140,24 +168,33 @@ export default function Portfolio() {
               Open to meaningful opportunities
             </div>
             <p className="mb-3 text-sm font-bold uppercase tracking-[0.3em] text-violet-300 sm:text-base">Hello, I&apos;m Gagandeep Sharma</p>
-            <h1 className="max-w-5xl text-[3.6rem] font-black leading-[0.88] tracking-[-0.065em] text-white sm:text-7xl lg:text-[6.6rem]">
-              I BUILD FOR<br /><span className="text-cyan-300">THE WEB.</span>
+            <h1 className="hero-title max-w-5xl text-[3.6rem] font-black leading-[0.88] tracking-[-0.065em] text-white sm:text-7xl lg:text-[6.6rem]">
+              <span>I</span> <span>BUILD</span> <span>FOR</span><br /><span className="text-cyan-300">THE</span> <span className="text-cyan-300">WEB.</span>
             </h1>
-            <p className="mt-7 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
-              Computer Science Engineering student crafting responsive digital experiences with React, JavaScript, HTML, and CSS—driven by curiosity and built around real usability.
+            <div className="mt-7 flex h-8 items-center gap-3 text-base font-semibold text-slate-300 sm:text-lg">
+              <span className="typing-line">React interfaces. Responsive experiences. Real usability.</span><span className="typing-caret" />
+            </div>
+            <p className="mt-3 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">
+              Computer Science Engineering student crafting responsive digital experiences with React, JavaScript, HTML, and CSS.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Button asChild className="h-14 rounded-full bg-violet-500 px-7 text-base font-bold text-white shadow-[0_0_36px_rgba(109,94,247,0.38)] hover:bg-violet-400">
+              <Button asChild className="magnetic-btn h-14 rounded-full bg-violet-500 px-7 text-base font-bold text-white shadow-[0_0_36px_rgba(109,94,247,0.38)] hover:bg-violet-400">
                 <a href="#project">View featured work <ArrowDownRight className="ml-2 h-5 w-5" /></a>
               </Button>
-              <Button asChild variant="outline" className="h-14 rounded-full border-white/20 bg-[#0b0d20]/65 px-7 text-base font-bold text-white backdrop-blur-md hover:bg-white/10 hover:text-white">
+              <Button asChild variant="outline" className="magnetic-btn h-14 rounded-full border-white/20 bg-[#0b0d20]/65 px-7 text-base font-bold text-white backdrop-blur-md hover:bg-white/10 hover:text-white">
                 <a href="/Gagandeep-Sharma-Resume.pdf" target="_blank" rel="noreferrer">Resume <Download className="ml-2 h-5 w-5" /></a>
               </Button>
+            </div>
+            <div className="mt-7 flex items-center gap-3">
+              <a className="social-link" href="https://github.com/sharmagagan18" target="_blank" rel="noreferrer" aria-label="GitHub"><Github /></a>
+              <a className="social-link" href="https://linkedin.com/in/gagandeep-sharma-397387420" target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin /></a>
+              <a className="social-link" href="mailto:18sharmagagan@gmail.com" aria-label="Email"><Mail /></a>
+              <span className="ml-2 text-[10px] font-bold uppercase tracking-[.18em] text-slate-500">Connect with me</span>
             </div>
           </div>
 
           <div className="hero-enter-delay relative mx-auto w-full max-w-md lg:ml-auto">
-            <div className="relative rounded-[2.2rem] border border-white/15 bg-[#0b0d20]/75 p-5 shadow-2xl backdrop-blur-xl sm:p-7">
+            <div data-tilt className="glass-profile relative rounded-[2.2rem] border border-white/15 bg-[#0b0d20]/75 p-5 shadow-2xl backdrop-blur-xl sm:p-7">
               <div className="mb-10 flex items-center justify-between">
                 <span className="rounded-full border border-violet-300/25 bg-violet-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-violet-200">Developer profile</span>
                 <Code2 className="h-5 w-5 text-cyan-300" />
@@ -168,12 +205,16 @@ export default function Portfolio() {
                 <div className="flex items-center gap-3"><MapPin className="h-4 w-4 text-violet-300" />Amroha, Uttar Pradesh, India</div>
                 <div className="flex items-center gap-3"><Sparkles className="h-4 w-4 text-violet-300" />Front-end focused builder</div>
               </div>
-              <div className="absolute -right-3 -top-3 rounded-2xl border border-cyan-300/25 bg-[#0b1530] px-4 py-3 text-center shadow-xl sm:-right-8 sm:top-12">
+              <div className="float-card absolute -right-3 -top-3 rounded-2xl border border-cyan-300/25 bg-[#0b1530] px-4 py-3 text-center shadow-xl sm:-right-8 sm:top-12">
                 <div className="text-lg font-black text-cyan-300">01</div><div className="text-[9px] font-bold uppercase tracking-widest text-slate-300">Live project</div>
+              </div>
+              <div className="float-card-delayed absolute -bottom-9 -left-3 hidden items-center gap-3 rounded-2xl border border-violet-300/25 bg-[#10142b]/95 px-4 py-3 shadow-xl backdrop-blur-xl sm:flex sm:-left-10">
+                <Terminal className="h-4 w-4 text-violet-300" /><div><p className="text-[9px] font-bold uppercase tracking-widest text-slate-500">Stack</p><p className="text-xs font-bold">React · Vite · Tailwind</p></div>
               </div>
             </div>
           </div>
         </div>
+        <a href="#about" className="scroll-cue absolute bottom-5 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-[9px] font-bold uppercase tracking-[.25em] text-slate-400 md:flex"><span>Scroll to explore</span><span className="h-8 w-px bg-cyan-300" /></a>
       </section>
 
       <section id="about" className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:py-32">
@@ -188,11 +229,18 @@ export default function Portfolio() {
             </div>
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {[["01", "Project built"], ["01", "Internship"], ["02", "Languages"], ["12", "Core skills"]].map(([value, label]) => (
-                <div key={label} className="rounded-[1.7rem] border border-white/10 bg-[#0d1024] p-5 transition-transform duration-300 hover:-translate-y-1 sm:p-6">
+                <div key={label} data-tilt className="rounded-[1.7rem] border border-white/10 bg-[#0d1024] p-5 transition-all duration-300 hover:border-cyan-300/25 sm:p-6">
                   <div className="text-3xl font-black text-cyan-300 sm:text-4xl">{value}</div>
                   <div className="mt-2 text-xs font-semibold uppercase tracking-wider text-slate-400">{label}</div>
                 </div>
               ))}
+              <div className="code-window col-span-2 rounded-[1.7rem] border border-white/10 bg-[#090b18] p-5 font-mono text-xs leading-6 text-slate-400">
+                <div className="mb-3 flex gap-1.5"><i className="bg-rose-400" /><i className="bg-amber-300" /><i className="bg-emerald-400" /></div>
+                <p><span className="text-violet-300">const</span> developer = &#123;</p>
+                <p className="pl-4">focus: <span className="text-cyan-300">&quot;responsive experiences&quot;</span>,</p>
+                <p className="pl-4">mindset: <span className="text-cyan-300">&quot;keep learning&quot;</span></p>
+                <p>&#125;;</p>
+              </div>
             </div>
           </div>
         </Reveal>
@@ -203,12 +251,15 @@ export default function Portfolio() {
           <Reveal>
             <SectionLabel number="02">Capabilities</SectionLabel>
             <div className="grid items-center gap-12 lg:grid-cols-[.88fr_1.12fr] lg:gap-16">
-              <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#10142b] p-3">
-                <img src="/assets/dev-workspace.png" alt="Abstract development workspace" className="aspect-square w-full rounded-[1.7rem] object-cover" />
+              <div data-tilt className="skill-orbit relative rounded-[2.2rem] border border-white/10 bg-[#10142b] p-3">
+                <img src="/assets/dev-workspace.png" alt="Abstract development workspace" loading="lazy" className="aspect-square w-full rounded-[1.7rem] object-cover" />
                 <div className="absolute bottom-7 left-7 rounded-2xl border border-white/15 bg-[#090b1b]/85 px-4 py-3 backdrop-blur-md">
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300">Current focus</p>
                   <p className="mt-1 font-bold">Responsive web experiences</p>
                 </div>
+                <span className="orbit-chip orbit-one">React.js</span>
+                <span className="orbit-chip orbit-two">JavaScript</span>
+                <span className="orbit-chip orbit-three">Git</span>
               </div>
               <div>
                 <h2 className="section-title">Tools I use to turn<br /><span className="text-cyan-300">ideas into interfaces.</span></h2>
@@ -239,11 +290,11 @@ export default function Portfolio() {
               <h2 className="section-title max-w-3xl">One project.<br /><span className="text-violet-300">Built end-to-end.</span></h2>
               <p className="max-w-sm text-sm leading-6 text-slate-400">No filler. A focused application designed around the real workflows of a modern library.</p>
             </div>
-            <div className="group overflow-hidden rounded-[2rem] border border-white/12 bg-[#0c0f22]/95 shadow-2xl lg:grid lg:grid-cols-[.9fr_1.1fr]">
+            <div data-tilt className="project-showcase group overflow-hidden rounded-[2rem] border border-white/12 bg-[#0c0f22]/95 shadow-2xl lg:grid lg:grid-cols-[.9fr_1.1fr]">
               <div className="relative flex min-h-[360px] flex-col justify-between overflow-hidden border-b border-white/10 p-7 sm:p-10 lg:border-b-0 lg:border-r">
-                <div className="project-grid absolute inset-0 opacity-40" />
+                <div className="project-grid absolute inset-0 opacity-40 transition-transform duration-700 group-hover:scale-110" />
                 <div className="relative flex items-start justify-between">
-                  <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4"><BookOpen className="h-7 w-7 text-cyan-300" /></div>
+                  <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110"><BookOpen className="h-7 w-7 text-cyan-300" /></div>
                   <span className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">01 / 01</span>
                 </div>
                 <div className="relative">
@@ -273,8 +324,8 @@ export default function Portfolio() {
           <Reveal>
             <SectionLabel number="04">Learning journey</SectionLabel>
             <h2 className="section-title mb-12">Experience meets<br /><span className="text-cyan-300">education.</span></h2>
-            <div className="grid gap-5 lg:grid-cols-2">
-              <article className="journey-card">
+            <div className="journey-timeline">
+              <article className="journey-card timeline-card">
                 <div className="journey-icon"><BriefcaseBusiness /></div>
                 <div className="flex-1">
                   <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><span className="eyebrow">Professional experience</span><span className="date-pill">07/2026 — 08/2026</span></div>
@@ -283,7 +334,7 @@ export default function Portfolio() {
                   <p className="mt-5 leading-7 text-slate-400">A 6-week Industrial Training in Python programming and application development.</p>
                 </div>
               </article>
-              <article className="journey-card">
+              <article className="journey-card timeline-card">
                 <div className="journey-icon"><GraduationCap /></div>
                 <div className="flex-1">
                   <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><span className="eyebrow">Higher education</span><span className="date-pill">08/2024 — Present</span></div>
@@ -292,7 +343,7 @@ export default function Portfolio() {
                   <p className="mt-5 flex items-center gap-2 text-slate-400"><MapPin className="h-4 w-4" />Moradabad, Uttar Pradesh</p>
                 </div>
               </article>
-              <article className="journey-card lg:col-span-2">
+              <article className="journey-card timeline-card">
                 <div className="journey-icon"><BookOpen /></div>
                 <div className="flex-1 lg:flex lg:items-center lg:justify-between lg:gap-10">
                   <div><span className="eyebrow">Foundation</span><h3 className="mt-3 text-2xl font-extrabold">Senior Secondary Education</h3><p className="mt-1 font-semibold text-violet-300">Krishna Public School</p></div>
@@ -300,7 +351,7 @@ export default function Portfolio() {
                 </div>
               </article>
             </div>
-            <div className="mt-5 flex items-center gap-4 rounded-[1.5rem] border border-white/10 bg-[#0d1024] p-5 sm:p-6"><div className="rounded-2xl bg-violet-400/10 p-3"><Languages className="h-6 w-6 text-violet-300" /></div><div><p className="text-xs font-bold uppercase tracking-widest text-slate-500">Languages</p><p className="mt-1 font-bold">English & Hindi</p></div></div>
+            <div className="mt-7 flex items-center gap-4 rounded-[1.5rem] border border-white/10 bg-[#0d1024] p-5 sm:p-6"><div className="rounded-2xl bg-violet-400/10 p-3"><Languages className="h-6 w-6 text-violet-300" /></div><div><p className="text-xs font-bold uppercase tracking-widest text-slate-500">Languages</p><p className="mt-1 font-bold">English & Hindi</p></div></div>
           </Reveal>
         </div>
       </section>
