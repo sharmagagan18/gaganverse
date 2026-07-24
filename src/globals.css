@@ -67,8 +67,11 @@
   .contact-link > svg:first-child { @apply h-5 w-5 shrink-0 text-cyan-300; }
   .contact-link > svg:last-child { @apply ml-auto h-4 w-4 shrink-0; }
   .contact-link small { @apply mb-0.5 block text-[9px] font-bold uppercase tracking-widest text-slate-500; }
-  .social-link { @apply flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition-all hover:-translate-y-1 hover:border-violet-300/40 hover:text-white; }
+  .social-link { @apply flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition-all hover:-translate-y-1 hover:border-violet-300/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300; }
   .social-link svg { @apply h-4 w-4; }
+  .skip-link {
+    @apply fixed left-4 top-3 z-[110] -translate-y-20 rounded-full bg-cyan-300 px-5 py-3 text-sm font-bold text-[#071018] transition-transform focus:translate-y-0;
+  }
 }
 
 .reveal {
@@ -202,7 +205,12 @@
 
 @media (max-width: 640px) {
   .typing-line { white-space: normal; animation: none; max-width: none; }
-  .typing-caret, .custom-cursor, .pointer-glow, .orbit-chip { display: none; }
+  .typing-caret, .orbit-chip { display: none; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .custom-cursor, .pointer-glow { display: none; }
+  [data-tilt] { transform: none !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -210,4 +218,5 @@
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .reveal, .hero-title > span { opacity: 1; transform: none; filter: none; }
   .typing-line { max-width: none; }
+  .custom-cursor, .pointer-glow { display: none; }
 }
