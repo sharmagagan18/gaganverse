@@ -210,11 +210,14 @@ export default function Portfolio() {
 
           <div className="hero-enter-delay relative mx-auto w-full max-w-md lg:ml-auto">
             <div data-tilt className="glass-profile relative rounded-[2.2rem] border border-white/15 bg-[#0b0d20]/75 p-5 shadow-2xl backdrop-blur-xl sm:p-7">
-              <div className="mb-10 flex items-center justify-between">
+              <div className="mb-5 flex items-center justify-between">
                 <span className="rounded-full border border-violet-300/25 bg-violet-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-violet-200">Developer profile</span>
                 <Code2 className="h-5 w-5 text-cyan-300" />
               </div>
-              <div className="mb-7 flex h-24 w-24 items-center justify-center rounded-[2rem] border border-cyan-300/20 bg-[#141836] text-3xl font-black text-cyan-300 shadow-[0_0_45px_rgba(103,232,249,0.15)]">GS</div>
+              <div className="portrait-frame group relative mb-7 aspect-[4/3] overflow-hidden rounded-[1.7rem] border border-white/15 bg-[#141836] shadow-[0_18px_55px_rgba(0,0,0,0.35)]">
+                <img src="/assets/gagandeep-portrait.jpg" alt="Gagandeep Sharma" decoding="async" className="h-full w-full object-cover object-[center_22%] transition-transform duration-700 ease-out group-hover:scale-[1.035]" />
+                <div className="absolute bottom-3 left-3 rounded-full border border-white/15 bg-[#090b1b]/85 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-cyan-200 backdrop-blur-md">Gagandeep Sharma</div>
+              </div>
               <h2 className="text-2xl font-extrabold tracking-tight">Computer Science<br />Engineering Student</h2>
               <div className="mt-7 space-y-3 border-t border-white/10 pt-6 text-sm text-slate-300">
                 <div className="flex items-center gap-3"><MapPin className="h-4 w-4 text-violet-300" />Amroha, Uttar Pradesh, India</div>
