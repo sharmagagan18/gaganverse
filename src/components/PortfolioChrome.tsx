@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, BriefcaseBusiness, Code2, Download, Github, Home, Linkedin, Mail, Search } from "lucide-react";
+import { ArrowUp, BriefcaseBusiness, Code2, Download, ExternalLink, Github, Home, Linkedin, Mail, Search } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 const destinations = [
   { label: "Go to home", hint: "Introduction", href: "#home", icon: Home },
   { label: "View featured project", hint: "Library Management System", href: "#project", icon: Code2 },
+  { label: "Open LMS live demo", hint: "lms-project-gagan.vercel.app", href: "https://lms-project-gagan.vercel.app/", icon: ExternalLink, external: true },
   { label: "Explore the journey", hint: "Experience & education", href: "#journey", icon: BriefcaseBusiness },
   { label: "Open GitHub", hint: "github.com/sharmagagan18", href: "https://github.com/sharmagagan18", icon: Github, external: true },
   { label: "Open LinkedIn", hint: "Connect professionally", href: "https://linkedin.com/in/gagandeep-sharma-397387420", icon: Linkedin, external: true },

@@ -311,7 +311,10 @@ export default function Portfolio() {
                 </div>
                 <div className="mt-9 flex flex-wrap items-center gap-3 border-t border-white/10 pt-7">
                   {["React.js", "Vite", "Tailwind CSS", "JavaScript"].map((tech) => <span key={tech} className="rounded-full bg-white/5 px-3 py-1.5 text-xs font-bold text-slate-300">{tech}</span>)}
-                  <a href="https://github.com/sharmagagan18" target="_blank" rel="noreferrer" className="ml-auto flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-[#0a0c1c] transition-transform hover:scale-105">GitHub <ArrowUpRight className="h-4 w-4" /></a>
+                  <div className="flex w-full flex-wrap gap-2 pt-2 sm:ml-auto sm:w-auto sm:pt-0">
+                    <a href="https://lms-project-gagan.vercel.app/" target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full bg-cyan-300 px-4 py-2 text-sm font-bold text-[#071018] transition-all hover:-translate-y-0.5 hover:bg-cyan-200">Live demo <ArrowUpRight className="h-4 w-4" /></a>
+                    <a href="https://github.com/sharmagagan18" target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-[#0a0c1c] transition-all hover:-translate-y-0.5">GitHub <Github className="h-4 w-4" /></a>
+                  </div>
                 </div>
               </div>
             </div>
